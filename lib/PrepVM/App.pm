@@ -10,6 +10,11 @@ has 'hostname' => (
     required => 1,
 );
 
+has 'machine_type' => (
+    is  => 'rw',
+    isa => 'Str',
+);
+
 has 'machine_path' => (
     is  => 'rw',
     isa => 'Str',
@@ -36,7 +41,7 @@ has 'ip_address' => (
     required => 1,
 );
 
-has 'subnet'    => (
+has 'netmask'    => (
     is  => 'rw',
     isa => 'Str',
     required => 1,
