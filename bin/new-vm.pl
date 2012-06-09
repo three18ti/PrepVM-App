@@ -26,6 +26,9 @@ my $vm = PrepVM::App->new(
     }
 );
 
+print $vm->hosts_template;
+print $vm->network_template;
+
 __END__
 my $hostname = 'titus';
 

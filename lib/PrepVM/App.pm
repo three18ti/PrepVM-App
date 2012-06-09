@@ -70,7 +70,7 @@ has 'network_template' => (
     is  => 'rw',
     isa => 'Str',
     lazy    => 1,
-    builder => 'build_network_template',
+    builder => '_build_network_template',
 );
 
 has 'puppet_address' => (
@@ -108,7 +108,6 @@ ff02::2 ip6-allrouters
 END_TEMPLATE
 
     return $hosts;
-
 }
 
 sub _build_network_template {
