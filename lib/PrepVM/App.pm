@@ -108,6 +108,13 @@ has 'network_template' => (
     builder => '_build_network_template',
 );
 
+has 'domain_xml' => (
+    is  => 'rw',
+    isa => 'Str',
+    lazy    => 1,
+    builder => '_build_domain_xml',
+);
+
 has 'puppet_address' => (
     is  => 'rw',
     isa => 'Str',
@@ -127,10 +134,10 @@ has 'qemu_command' => (
     isa => 'Str',
     lazy    => 1,
     default => sub {
-        my $command = 'qemu-img create '
-            . '-b ' . $_[0]-> 
-            . '-f ' . $_[0]->image_format
-            . './ ' . $_[0]->full_name
+        my $command = 'qemu-img create'
+            . ' -b ' . $_[0]->base_image
+            . ' -f ' . $_[0]->image_format
+            . ' ./'  . $_[0]->file_name
     }
 );
 
@@ -184,5 +191,79 @@ END_TEMPLATE
     return $network_template;
 }
 
+sub _build_domain_xml {
+    my $self = shift;
+    my $name = $self->full_name;
+    my $image_path = $self->image_path;
+
+    $name = substr $name, 0, 50, if length $name > 50;
+
+    my $config =<<END_CONFIG;
+<domain type='kvm'>
+    <name>$name</name>
+    <memory>1048576</memory>
+    <currentMemory>1048576</currentMemory>
+    <vcpu>1</vcpu>
+    <os>
+        <type arch='x86_64' machine='pc-1.0'>hvm</type>
+        <boot dev='hd'/>
+    </os>
+    <features>
+        <acpi/>
+        <apic/>
+        <pae/>
+    </features>
+    <clock offset='utc'/>
+    <on_poweroff>destroy</on_poweroff>
+    <on_reboot>restart</on_reboot>
+    <on_crash>restart</on_crash>
+    <devices>
+        <emulator>/usr/bin/kvm</emulator>
+        <disk type='file' device='disk'>
+            <driver name='qemu' type='qcow2'/>
+            <source file='$image_path'/>
+            <target dev='hda' bus='ide'/>
+            <alias name='ide0-0-0'/>
+            <address type='drive' controller='0' bus='0' unit='0'/>
+        </disk>
+        <controller type='ide' index='0'>
+            <alias name='ide0'/>
+            <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
+        </controller>
+        <interface type='bridge'>
+            <source bridge='br0'/>
+            <target dev='vnet1'/>
+            <alias name='net0'/>
+            <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
+        </interface>
+        <serial type='pty'>
+            <source path='/dev/pts/3'/>
+            <target port='0'/>
+            <alias name='serial0'/>
+        </serial>
+        <console type='pty' tty='/dev/pts/3'>
+            <source path='/dev/pts/3'/>
+            <target type='serial' port='0'/>
+            <alias name='serial0'/>
+        </console>
+        <input type='mouse' bus='ps2'/>
+        <graphics type='vnc' port='5901' autoport='yes'/>
+        <video>
+            <model type='cirrus' vram='9216' heads='1'/>
+            <alias name='video0'/>
+            <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
+        </video>
+        <memballoon model='virtio'>
+            <alias name='balloon0'/>
+            <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
+        </memballoon>
+    </devices>
+    <seclabel type='dynamic' model='apparmor' relabel='yes'>
+    </seclabel>
+</domain>
+END_CONFIG
+
+    return $config;
+}
 
 1;
