@@ -16,7 +16,7 @@ my $h = Sys::Guestfs->new;
 $h->add_drive_opts( $path . $image, format => $format );
 $h->launch;
 
-my $config = get_config ('192.168.0.17', 
+my $config = get_config ('192.168.0.18', 
                             '255.255.0.0', 
                             '192.168.0.1', 
                             '192.168.0.2',
