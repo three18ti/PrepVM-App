@@ -35,6 +35,35 @@ has 'image_format' => (
     required => 1,
 );
 
+has 'full_name' => (
+    is      => 'rw',
+    isa     => 'Str',
+    lazy    => 1,
+    default => sub {
+        my $name;
+        $name .= $_[0]->machine_type . '-' if $_[0]->machine_type;
+        $name .= $_[0]->hostname . '-' . $_[0]->image_type;
+    }
+);
+
+has 'file_name' => (
+    is      => 'rw',
+    isa     => 'Str',
+    lazy    => 1,
+    default => sub {
+        my $name = $_[0]->full_name . '.' . $_[0]->image_format;
+    }
+);
+
+has 'image_path' => (
+    is      => 'rw',
+    isa     => 'Str',
+    lazy    => 1,
+    default => sub {
+        my $path = $_[0]->machine_path . $_[0]->file_name;
+    }
+);
+
 has 'ip_address' => (
     is  => 'rw',
     isa => 'Str',
@@ -57,6 +86,12 @@ has 'nameserver' => (
     is  => 'rw',
     isa => 'Str',
     required => 1,
+);
+
+has 'base_image' => (
+    is  => 'rw',
+    isa => 'Str',
+    required    => 1,
 );
 
 has 'hosts_template' => (
@@ -85,6 +120,18 @@ has 'puppet_name' => (
     isa => 'Str',
     required    => 1,
     default => 'puppet',
+);
+
+has 'qemu_command' => (
+    is  => 'rw',
+    isa => 'Str',
+    lazy    => 1,
+    default => sub {
+        my $command = 'qemu-img create '
+            . '-b ' . $_[0]-> 
+            . '-f ' . $_[0]->image_format
+            . './ ' . $_[0]->full_name
+    }
 );
 
 sub _build_hosts_template {
