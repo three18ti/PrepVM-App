@@ -5,10 +5,11 @@ use warnings;
 
 use Sys::Guestfs;
 
-my $hostname = 'fractal';
+my $hostname = 'titus';
 
 my $path = '/media/KVM/machines/';
-my $image = 'test-fractal-ubuntu-server-precise-12.04.x86_64.qcow2';
+
+my $image = "auto-$hostname-ubuntu-server-12.04-precise-x86_64.qcow2";
 my $format = 'qcow2';
 
 my $h = Sys::Guestfs->new;
@@ -22,10 +23,10 @@ my $config = get_config ('192.168.0.18',
                             '192.168.0.2',
 );
 
+$h->mount_options('', '/dev/vda1', '/');
+
 $h->write('/etc/network/interfaces', $config);
-
 $h->write('/etc/hostname', $hostname);
-
 $h->write('/etc/hosts', get_hosts($hostname, '192.168.0.2'));
 
 sub get_config {
