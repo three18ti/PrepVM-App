@@ -22,11 +22,11 @@ my $config = get_config ('192.168.0.18',
                             '192.168.0.2',
 );
 
-$h->write('/etc/network/interfaces' $config);
+$h->write('/etc/network/interfaces', $config);
 
 $h->write('/etc/hostname', $hostname);
 
-$h->write('/etc/hosts', get_hosts($hostname, '192.168.0.2');
+$h->write('/etc/hosts', get_hosts($hostname, '192.168.0.2'));
 
 sub get_config {
     my ($ip, $netmask, $gateway, $nameserver) = @_;
