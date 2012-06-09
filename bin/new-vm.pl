@@ -15,7 +15,6 @@ GetOptions(
 
 print_help() if $help;
 
-use lib './lib';
 use PrepVM::App;
 
 die "Please indicate a valid Machine Config\n"
