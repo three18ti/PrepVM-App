@@ -1,0 +1,36 @@
+# this is an example full config, defaults are listed below the optional parameters
+# name of service VM runs (optional) 
+# vm_service:
+
+# vm naee
+hostname:       titus
+
+#definition of os type and architecture (optional) 
+# image_type:   ubuntu-server-12.04-precise-x86_64
+
+# virtual machine image format (optional)
+# image_format:     qcow2
+
+#number of virtual cpus (optional)
+# num_cpus: 1
+
+# max memory allowed for the VM (in MB) (optional)
+# max_memory: 1024
+
+# network configuration
+ip_address:     192.168.0.18
+gateway:        192.168.0.1
+netmask:        255.255.0.0
+nameserver:     192.168.0.2
+
+# directory where machine images will be stored (optional)
+# machine_path: /media/KVM/machines/
+
+# base image relative to machine_path directory (optional, will use the below image if not specified)
+# base_image:     ../master/ubuntu-server-12.04-precise-x86_64-master-puppet-compressed.qcow2
+
+# name of the puppet server, default puppet installation is puppet (optional)
+# puppet_name:    puppet
+# address of puppet server, defaulting to my local puppet server ATM (optional)
+# puppet_address: 192.168.0.2
+

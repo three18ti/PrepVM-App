@@ -1,7 +1,16 @@
-machine_type:   auto
+# vm nameing information
+vm_service:     auto
 hostname:       titus
+
+#optional image_type default is shown below
+# image_type:   ubuntu-server-12.04-precise-x86_64
+
+# network configuration
 ip_address:     192.168.0.18
 gateway:        192.168.0.1
 netmask:        255.255.0.0
 nameserver:     192.168.0.2
+
+# base image relative to machine directory
 base_image:     ../master/ubuntu-server-12.04-precise-x86_64-master-puppet-compressed.qcow2
+

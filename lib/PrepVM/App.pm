@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 package PrepVM::App;
+# ABSTRACT: turns baubles into trinkets
 
 use Moose;
 
@@ -10,7 +11,7 @@ has 'hostname' => (
     required => 1,
 );
 
-has 'machine_type' => (
+has 'vm_service' => (
     is  => 'rw',
     isa => 'Str',
 );
@@ -41,7 +42,7 @@ has 'full_name' => (
     lazy    => 1,
     default => sub {
         my $name;
-        $name .= $_[0]->machine_type . '-' if $_[0]->machine_type;
+        $name .= $_[0]->vm_service . '-' if $_[0]->vm_service;
         $name .= $_[0]->hostname . '-' . $_[0]->image_type;
     }
 );
@@ -62,6 +63,20 @@ has 'image_path' => (
     default => sub {
         my $path = $_[0]->machine_path . $_[0]->file_name;
     }
+);
+
+has 'num_cpus' => (
+    is      => 'rw',
+    isa     => 'Int',
+    required    => 1,
+    default     => 1,
+);
+
+has 'max_memory' => (
+    is      => 'rw',
+    isa     => 'Int',
+    required    => 1,
+    default     => 1024,
 );
 
 has 'ip_address' => (
@@ -92,6 +107,7 @@ has 'base_image' => (
     is  => 'rw',
     isa => 'Str',
     required    => 1,
+    default => '../master/ubuntu-server-12.04-precise-x86_64-master-puppet-compressed.qcow2',
 );
 
 has 'hosts_template' => (
@@ -193,6 +209,8 @@ END_TEMPLATE
 
 sub _build_domain_xml {
     my $self = shift;
+    my $cpus = $self->num_cpus;
+    my $max_memory = $self->max_memory * 1024;
     my $name = $self->full_name;
     my $image_path = $self->image_path;
 
@@ -201,9 +219,9 @@ sub _build_domain_xml {
     my $config =<<END_CONFIG;
 <domain type='kvm'>
     <name>$name</name>
-    <memory>1048576</memory>
-    <currentMemory>1048576</currentMemory>
-    <vcpu>1</vcpu>
+    <memory>$max_memory</memory>
+    <currentMemory>$max_memory</currentMemory>
+    <vcpu>$cpus</vcpu>
     <os>
         <type arch='x86_64' machine='pc-1.0'>hvm</type>
         <boot dev='hd'/>

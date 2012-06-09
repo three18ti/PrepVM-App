@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-
+use lib './lib';
 use strict;
 use warnings;
 use 5.010;
@@ -18,7 +18,7 @@ print_help() if $help;
 use PrepVM::App;
 
 die "Please indicate a valid Machine Config\n"
-    . "use --help for help"
+    . "use --help for help\n"
     unless @ARGV;
 
 use Sys::Virt;
