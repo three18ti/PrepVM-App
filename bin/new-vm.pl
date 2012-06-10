@@ -6,14 +6,17 @@ use 5.010;
 
 use Getopt::Long;
 
-my ($overwrite, $help);
+my ($overwrite, $default_config, $help);
 
 GetOptions(
-    "force"     => \$overwrite,
-    "help"      => \$help,
+    "force"             => \$overwrite,
+    "default-config=s"  => \$default_config,
+    "help"              => \$help,
 );
 
 print_help() if $help;
+
+$default_config = '/etc/new-vm.yml' unless $default_config;
 
 use PrepVM::App;
 
@@ -28,8 +31,10 @@ my $vmm = Sys::Virt->new(address => $address,);
 # load the VM config
 use Config::Any;
 my $config = $ARGV[0];
+
+my $defaults = Config::Any->load_files({ files => [$default_config], use_ext => 1 })->[0]->{$default_config};
 my $cfg = Config::Any->load_files({ files => [$config], use_ext => 1 })->[0]->{$config};
-my $vm = PrepVM::App->new( $cfg );
+my $vm = PrepVM::App->new( { %$defaults, %$cfg } );
 
 # check for an existing VM
 if ($overwrite) {
@@ -73,8 +78,9 @@ $dom->create;
 sub print_help {
     die<<END_HELP;
 usage new-vm.pl [-f] [config-file.yml]
-
-    -f|--force      purge any existing machines under the same name
-    -h|--help       print this message and exit
+    
+    -d|--default-config specify config with defaults, default is /etc/new-vm.yml
+    -f|--force          purge any existing machines under the same name
+    -h|--help           print this message and exit
 END_HELP
 }

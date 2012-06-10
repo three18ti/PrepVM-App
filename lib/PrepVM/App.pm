@@ -19,14 +19,55 @@ has 'vm_service' => (
 has 'machine_path' => (
     is  => 'rw',
     isa => 'Str',
-    default => '/media/KVM/machines/',
+    required => 1,
+#    default => '/media/KVM/machines/',
+);
+
+has 'os_type'  => (
+    is      => 'rw',
+    isa     => 'Str',
+    required    => 1,
+#    default => 'ubuntu',
+);
+
+has 'os_kind'    => (
+    is      => 'rw',
+    isa     => 'Str',
+#    default => 'server',
+);
+
+has 'os_version'    => (
+    is      => 'rw',
+    isa     => 'Str',
+    required => 1,
+#    default => '12.04',
+);
+
+has 'os_code_name'  => (
+    is      => 'rw',
+    isa     => 'Str',
+#    default => 'precise',
+);
+
+has 'os_architecture' => (
+    is      => 'rw',
+    isa     => 'Str',
+#    default => 'x86_64',
 );
 
 has 'image_type' => (
     is  => 'rw',
     isa => 'Str',
-    default => 'ubuntu-server-12.04-precise-x86_64',
-    required => 1,
+    lazy => 1,
+    default => sub {
+        my $image_type;
+        $image_type .= '-' . $_[0]->os_type         if $_[0]->os_type;
+        $image_type .= '-' . $_[0]->os_kind         if $_[0]->os_kind;
+        $image_type .= '-' . $_[0]->os_version      if $_[0]->os_version;
+        $image_type .= '-' . $_[0]->os_code_name    if $_[0]->os_code_name;
+        $image_type .= '-' . $_[0]->os_architecture if $_[0]->os_architecture;
+        return $image_type;
+    }
 );
 
 has 'image_format' => (
@@ -43,7 +84,7 @@ has 'full_name' => (
     default => sub {
         my $name;
         $name .= $_[0]->vm_service . '-' if $_[0]->vm_service;
-        $name .= $_[0]->hostname . '-' . $_[0]->image_type;
+        $name .= $_[0]->hostname . $_[0]->image_type;
     }
 );
 
@@ -76,7 +117,7 @@ has 'max_memory' => (
     is      => 'rw',
     isa     => 'Int',
     required    => 1,
-    default     => 1024,
+#    default     => 1024,
 );
 
 has 'ip_address' => (
@@ -107,7 +148,7 @@ has 'base_image' => (
     is  => 'rw',
     isa => 'Str',
     required    => 1,
-    default => '../master/ubuntu-server-12.04-precise-x86_64-master-puppet-compressed.qcow2',
+#    default => '../master/ubuntu-server-12.04-precise-x86_64-master-puppet-compressed.qcow2',
 );
 
 has 'hosts_template' => (
@@ -135,14 +176,14 @@ has 'puppet_address' => (
     is  => 'rw',
     isa => 'Str',
     required => 1,
-    default => '192.168.0.2',
+#    default => '192.168.0.2',
 );
 
 has 'puppet_name' => (
     is  => 'rw',
     isa => 'Str',
     required    => 1,
-    default => 'puppet',
+#    default => 'puppet',
 );
 
 has 'qemu_command' => (
