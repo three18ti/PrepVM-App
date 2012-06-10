@@ -20,39 +20,33 @@ has 'machine_path' => (
     is  => 'rw',
     isa => 'Str',
     required => 1,
-#    default => '/media/KVM/machines/',
 );
 
 has 'os_type'  => (
     is      => 'rw',
     isa     => 'Str',
     required    => 1,
-#    default => 'ubuntu',
 );
 
 has 'os_kind'    => (
     is      => 'rw',
     isa     => 'Str',
-#    default => 'server',
 );
 
 has 'os_version'    => (
     is      => 'rw',
     isa     => 'Str',
     required => 1,
-#    default => '12.04',
 );
 
 has 'os_code_name'  => (
     is      => 'rw',
     isa     => 'Str',
-#    default => 'precise',
 );
 
 has 'os_architecture' => (
     is      => 'rw',
     isa     => 'Str',
-#    default => 'x86_64',
 );
 
 has 'image_type' => (
@@ -117,7 +111,6 @@ has 'max_memory' => (
     is      => 'rw',
     isa     => 'Int',
     required    => 1,
-#    default     => 1024,
 );
 
 has 'ip_address' => (
